@@ -83,4 +83,5 @@ alter table tarifa
 add constraint tarifaajena FOREIGN key (compa�ia) references compa�ia (cif) on delete cascade;
 
 
+---------# Clase 3 #---------
 
