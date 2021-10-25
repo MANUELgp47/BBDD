@@ -122,7 +122,25 @@ from dual;
 SELECT A.NOMBRE
 FROM EI.ALUMNO
 WHERE NOMBRE LIKE 'M%'AND LUGAR LIKE '______%' AND LUGAR NOT LIKE 'P%';
-
-SELECT (EXTRACT (YEAR FROM FECHANAC )
+		     
+SELECT DISTINCT (EXTRACT (YEAR FROM FECHANAC ) ANIO --DISTINCT PARA QUE NO SE REPITAN LOS MISMO AÑOS VARIAS VECES
 FROM EI.ALUMNO
-ORDER BY (EXTRACT (YEAR FROM FECHANAC );
+ORDER BY ANIO;
+
+--MF-1. Obtener el nombre de las compañías cuya dirección web contenga la cadena ‘et’ y acabe en ‘com’
+SELECT NOMBRE
+FROM MF.COMPAÑIA
+WHERE WEB LIKE '&et&com';
+
+--MF-2. Obtener el nombre y dirección de los clientes nacidos en 1973 o 1985 y cuyo código postal comience por 
+-- 15, ordenado ascendentemente por el nombre y, en caso de igualdad, descendentemente por la dirección
+select nombre, direccion 
+from mf.cliente 
+where (EXTRACT (YEAR FROM F_NAC ) IN (1973, 1985) AND CP LIKE '15%';
+
+-- MF-3. Obtener el teléfono de destino de las llamadas realizadas desde el número  “666010101”, en el año 2006
+SELECT tf_destino
+FROM MF.LLAMADA
+WHERE tf_origen = '666010101' AND (EXTRACT (YEAR FROM fecha_hora ) = 2006;
+
+-- MF-4. Obtener los números de teléfono que han llamado alguna vez al “666010101”, entre las 10:00 y las 12:00
