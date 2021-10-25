@@ -85,3 +85,9 @@ add constraint tarifaajena FOREIGN key (compa�ia) references compa�ia (cif) 
 
 ---------# Clase 3 #---------
 
+INSERT INTO compañia values ('A00000001', 'Kietostar', 'http://www.kietostar.com') ;
+INSERT INTO compañia values ('B00000002', 'Aotra', 'http://www.aotra.com') ;
+
+INSERT INTO TARIFA values('joven', 'D00000004', 'menores de 21 años', 0,20) ;
+INSERT INTO TARIFA values('dúo', 'B00000002', 'la pareja también está en la compañía', 0,18) ;
+INSERT INTO TARIFA values('amigos', 'B00000002', '10 amigos están también en la compañía', 1,60) ;
