@@ -136,7 +136,8 @@ WHERE WEB LIKE '&et&com';
 -- 15, ordenado ascendentemente por el nombre y, en caso de igualdad, descendentemente por la dirección
 select nombre, direccion 
 from mf.cliente 
-where (EXTRACT (YEAR FROM F_NAC ) IN (1973, 1985) AND CP LIKE '15%';
+where (EXTRACT (YEAR FROM F_NAC ) IN (1973, 1985) AND CP LIKE '15%'
+ORDER BY NOMBRE, DIRECCION DESC;
 
 -- MF-3. Obtener el teléfono de destino de las llamadas realizadas desde el número  “666010101”, en el año 2006
 SELECT tf_destino
