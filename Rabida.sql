@@ -91,3 +91,38 @@ INSERT INTO compañia values ('B00000002', 'Aotra', 'http://www.aotra.com') ;
 INSERT INTO TARIFA values('joven', 'D00000004', 'menores de 21 años', 0,20) ;
 INSERT INTO TARIFA values('dúo', 'B00000002', 'la pareja también está en la compañía', 0,18) ;
 INSERT INTO TARIFA values('amigos', 'B00000002', '10 amigos están también en la compañía', 1,60) ;
+
+------Practica 2 #############
+select * from ei.profesor;
+
+select tipo from ei.ordenador ;
+
+select distinc O.tipo Esto_es_un_alias
+from ei.ordenador O;--la "O" es un alias 
+
+select A.Idasig as codigo, A.Nombre, A.ESP as especialidad
+from EI.ASIGNATURA A 
+WHERE A.curso = 3 and A.creditos > 4.5;
+
+select A.NOMBRE, A.NH AS NUM_HERMANOS, 300*A.NH AS DESCUENTO
+from EI.ALUMNO A
+ORDER BY DESCUENTO DESC, A.NOMBRE;
+
+select A.DNI, A.NOMBRE
+from EI.ALUMNO A
+WHERE (EXTRACT (YEAR FROM A.FECHANAC ) BETWEEN 1970 AND 1974) 
+		AND (A.LUGar IN ('Huelva','Cadiz');
+		
+select to_char(sysdate, 'dd-mm-yyyy hh:mi:ss') fecha_hora
+from dual; 
+
+select to_char(CURRENT_DATE, 'dd-mm-yyyy hh:mi:ss') fecha_hora --CURRENT_DATE HORA DE LA ZONA HORARIA DE LA SESIÓN
+from dual; 
+
+SELECT A.NOMBRE
+FROM EI.ALUMNO
+WHERE NOMBRE LIKE 'M%'AND LUGAR LIKE '______%' AND LUGAR NOT LIKE 'P%';
+
+SELECT (EXTRACT (YEAR FROM FECHANAC )
+FROM EI.ALUMNO
+ORDER BY (EXTRACT (YEAR FROM FECHANAC );
