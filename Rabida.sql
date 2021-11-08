@@ -140,8 +140,65 @@ where (EXTRACT (YEAR FROM F_NAC ) IN (1973, 1985) AND CP LIKE '15%'
 ORDER BY NOMBRE, DIRECCION DESC;
 
 -- MF-3. Obtener el teléfono de destino de las llamadas realizadas desde el número  “666010101”, en el año 2006
-SELECT tf_destino
+SELECT distinct tf_destino
 FROM MF.LLAMADA
 WHERE tf_origen = '666010101' AND (EXTRACT (YEAR FROM fecha_hora ) = 2006;
 
 -- MF-4. Obtener los números de teléfono que han llamado alguna vez al “666010101”, entre las 10:00 y las 12:00
+select distinct tf_origen
+FROM MF.LLAMADA
+WHERE TF_DESTINO ='666010101' AND ESTRACT (hour from fecha_hora) between 10 and 12;				   
+				   
+----------Clase 4 08/11
+
+--EI-8. Obtener los nombres de las asignaturas junto con el nombre del profesor responsable
+select A.NOMBRE, P.NOMBRE
+FROM EI.ASIGNATURA A, EI.PROFESOR P
+WHERE A.PROF = P.NPR;
+--MISMO PERO CON INNER JOIN
+SELECT A.NOMBRE AS NOMASIG, P.NOMBRE AS NOMPROF
+FROM EI.ASIGNATURA A INNER JOIN EI.PROFESOR P ON A.PROF = P.NPR
+
+--EI-9. Obtener los números de los alumnos que se han matriculado en Bases de Datos I en el curso 2002-03
+SELECT ALUM
+FROM EI.MATRICULA M INNER JOIN EI.ASIGNATURA A USING (IDASIG)
+WHERE A.NOMBRE = 'Bases de Datos I' AND AÑO=2002;
+
+/*EI-10. Obtener los nombres de los alumnos que han aprobado la asignatura Algoritmos y Estructuras de 
+Datos I en la convocatoria de febrero_junio de 2001*/
+select A.NOMBRE
+from (EI.ASIGNATURA ASIG INNER JOIN EI.MATRICULA M USING(IDASIG))
+  INNER JOIN EI.ALUMNO A ON M.ALUM = A.NAI
+where ASIG.NOMBRE = 'Algoritmos y Estructuras de Datos I' AND AÑO = 2001 AND FEB_JUN >=5;
+
+/*EI-11. Obtener un listado con el número de despacho, pero sólo de aquellos donde hay al menos 2 
+profesores*/
+SELECT DISTINCT DESPACHO
+FROM EI.PROFESOR P1 JOIN EI.PROFESOR P2 USING (DESPACHO)
+WHERE P1.NOMBRE <> P2.NOMBRE;
+
+/*EI-12. Obtener una lista con todas las asignaturas de las que es responsable o docente la profesora 
+Dolores Toscano Barriga*/
+(SELECT A.NOMBRE
+FROM EI.ASIGNATURA A INNER JOIN EI.PROFESOR P ON P.NPR = A.PROF 
+WHERE P.NOMBRE ='Dolores Toscano Barriga')
+UNION
+(SELECT A.NOMBRE
+FROM (EI.ASIGNATURA A INNER JOIN EI.MATRICULA M USING (IDASIG))
+INNER JOIN EI.PROFESOR P ON M.PROF=P.NPR
+WHERE P.NOMBRE = 'Dolores Toscano Barriga');
+
+/*EI-13. Obtener los nombres de los alumnos que no se han presentado a ‘Bases de Datos I’ en diciembre 
+de 2002 por haberla aprobado en una convocatoria anterior del mismo año*/
+SELECT A.nombre
+FROM (EI.ALUMNO A INNER JOIN EI.MATRICULA M ON A.nAI=M.alum)
+  INNER JOIN EI.ASIGNATURA ASIG USING (idAsig)
+WHERE ASIG.nombre = 'Bases de Datos I' AND AÑO = 2002 AND dic IS NULL AND (feb_jun>= OR sep>=5);
+
+
+/*MF-5. Mostrar el código y coste de las tarifas junto con el nombre de la compañía que las ofrecen, de aquellas 
+tarifas cuya descripción indique que otras personas deben estar también en la misma compañía*/
+SELECT T.TARIFA, T.COSTE, C.NOMBRE
+FROM MF.TARIFA T INNER JOIN MF.COMPAÑIA C ON T.COMPAÑIA = C.CIF
+WHERE T.DESCRIPCION LIKE '% compañía';
+
