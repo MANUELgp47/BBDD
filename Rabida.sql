@@ -202,3 +202,28 @@ SELECT T.TARIFA, T.COSTE, C.NOMBRE
 FROM MF.TARIFA T INNER JOIN MF.COMPAÑIA C ON T.COMPAÑIA = C.CIF
 WHERE T.DESCRIPCION LIKE '% compañía';
 
+/*MF-6. Nombre y número de teléfonos de aquellos abonados con contrato que tienen tarifas inferiores a 0,20 €*/
+select tf.numero, c.nombre
+from (mf.telefono tf inner join  mf.tarifa t using (tarifa, compañia))
+      inner join mf.cliente c on tf.cliente = c.dni
+where tf.tipo = 'C' and t.coste < 0.2;
+
+/*MF-7. Obtener el código de las tarifas, el nombre de las compañías, los números de teléfono y los puntos, de 
+aquellos teléfonos que se contrataron en el año 2006 y que hayan obtenido más de 200 puntos*/
+select t.tarifa, c.nombre--, tf.nuemero, tf.puntos
+from  mf.tarifa t inner join mf.compañia c on t.compañia = c.cif
+      mf.telefono tf inner join c tf..compañia = c.cif
+where (EXTRACT (YEAR FROM tf.f_contrato ))=2006 and t.puntos > 200;
+---terminar 
+
+
+/*MF-8. Obtener los números de teléfono (origen y destino), así como el tipo de contrato, de los clientes que 
+alguna vez hablaron por teléfono entre las 8 y las 10 de la mañana*/
+select distinct tfo.numero origen , tfo.tipo, tfd.numero destino, tfd.tipo
+from mf.telefono tfo inner join mf.llamada ll on tfo.numero = ll.tf_origen
+inner join mf.telefono tfd on tfd.numero = ll.tf_destino
+where extract (hour from fecha_hora) >= 8 and extract (hour from fecha_hora) <10;
+				   
+/*MF-9. Interesa conocer los nombres y números de teléfono de los clientes (origen y destino) que, perteneciendo 
+a  compañías distintas, mantuvieron llamadas que superaron los 15 minutos. Se desea conocer, también, la 
+fecha y la hora de dichas llamadas así como la duración de esas llamadas*/
