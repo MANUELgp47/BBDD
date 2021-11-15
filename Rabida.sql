@@ -270,3 +270,28 @@ FROM (MF.CLIENTE C INNER JOIN MF.TELEFON T ON C.DNI=T.CLIENTE) INNER JOIN MF.COM
 WHERE CO.NOMBRE = 'Aotra' and T.TARIFA = ( SELECT T.TARIFA FROM MF.TELEFONO T WHERE T.NUMERO = '654123321');
  
 
+ 
+--MF-12
+SELECT DISTINCT T.NUMERO, T.F_CONTRATO. T.TIPO
+FROM MF.TELEFONO T INNER JOIN MF.LLAMADA LL ON T.NUMERO = LL.TF_ORIGEN 
+WHERE TO_CHAR (LL.FECHA_HORA, 'MM/YY') = '10/06'
+  AND LL.TF_DESTINO NOT IN (SELECT T.NUMERO FROM MF.TELEFONO Y INNER JOIN MF.CLIENTE C ON C.DNI = T.CLIENTE WHERE PROVINCIA = 'La Coruña' );
+
+--MF-13
+SELECT NOMBRE 
+FROM MF.CLIENTE
+WHERE DNI IN (SELECT CLIENTE FROM MF.TELEFONO WHERE TARIFA= 'dúo') and DNI not in ( SELECT CLIENTE FROM MF.TELEFONO WHERE TARIFA= 'autónomos');
+
+/*MF-16. Se necesita conocer el nombre de los clientes que tienen teléfonos con fecha de contratación anterior a 
+alguno de los teléfonos de Ramón Martínez Sabina, excluido, claro, el propio Ramón Martínez Sabina.*/
+SELECT NOMBRE
+FROM mf.CLIENTES C INNER JOIN mf.TELEFONO T USING (DNI)
+WHERE TO_CHAR (T.f_contrato, 'dd/MM/YY') < any (select TO_CHAR (T.f_contrato, 'dd/MM/YY') fecha
+                                                from mf.telefono INNER JOIN mf.cliente cli USING (cliente)
+                                                where cli.nombre <> 'Ramón Martínez Sabina');
+select distinct c.nombre
+from mf.cliente c inner join mf.telefono t on c.dni = t.cliente
+where c.nombre <> 'Ramón Martínez Sabina'
+      and t.f_contrato < any (select t.f_contrato
+                              from mf.cliente c inner join mf.telefono t on c.dni = t.cliente 
+                              where c.nombre = 'Ramón Martínez Sabina');
