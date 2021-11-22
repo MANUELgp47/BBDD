@@ -295,3 +295,9 @@ where c.nombre <> 'Ramón Martínez Sabina'
       and t.f_contrato < any (select t.f_contrato
                               from mf.cliente c inner join mf.telefono t on c.dni = t.cliente 
                               where c.nombre = 'Ramón Martínez Sabina');
+
+---22/11/2021
+--EI-18. Listado de los despachos donde hay profesores que no son responsables de ninguna asignatura
+select distinct p.despacho
+from ei.profesor p
+where not EXISTS(select * from ri.asignatura a where p.npr= a.profesor);	       
