@@ -342,3 +342,18 @@ from mf.cliente c inner join MF.TELEFONO tf on tf.cliente = c.DNI
 where co.nombre = 'Kietostar' and not exists ( select * from MF.LLAMADA ll 
                                                where tf.numero = ll.tf_origen and extract (month from ll.fecha_hora) = 9);                 
       
+/*MF-20. Utilizando consultas correlacionadas, mostrar todos los datos de los telefonos que hayan llamado al 
+número 654234234 pero no al 666789789*/
+select *
+from MF.TELEFONO t
+where EXISTS ( select * from MF.LLAMADA where tf_origen = t.numero and tf_destino = 654234234) and not exists ( select * from MF.LLAMADA where tf_origen = t.numero and tf_destino = 666789789);
+
+/*MF-21. Utilizando consultas correlacionadas, obtener el nombre y número de teléfono de los clientes de la 
+compañía Kietostar que no han hecho llamadas a otros teléfonos de la misma compañía*/
+select c.nombre, t.numero 
+from mf.cliente c inner join MF.TELEFONO t on t.cliente = c.DNI
+                  inner join m.compañia cia on cia.cif= t.compañia
+where cia.nombre = 'Kietostar' and not exists (select * from mf.llamada l inner join mf.telefono td on 
+                                        td.numero=l.tf_destino
+                                        inner join mf.compañia c on c.cif = td.compañia
+                                      where c.nombre = 'Kietostar' and t.numero = l.tf_origen);
