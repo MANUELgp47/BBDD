@@ -352,7 +352,7 @@ where EXISTS ( select * from MF.LLAMADA where tf_origen = t.numero and tf_destin
 compañía Kietostar que no han hecho llamadas a otros teléfonos de la misma compañía*/
 select c.nombre, t.numero 
 from mf.cliente c inner join MF.TELEFONO t on t.cliente = c.DNI
-                  inner join m.compañia cia on cia.cif= t.compañia
+                  inner join mf.compañia cia on cia.cif= t.compañia
 where cia.nombre = 'Kietostar' and not exists (select * from mf.llamada l inner join mf.telefono td on 
                                         td.numero=l.tf_destino
                                         inner join mf.compañia c on c.cif = td.compañia
