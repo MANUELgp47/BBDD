@@ -296,8 +296,44 @@ where c.nombre <> 'Ramón Martínez Sabina'
                               from mf.cliente c inner join mf.telefono t on c.dni = t.cliente 
                               where c.nombre = 'Ramón Martínez Sabina');
 
+------clase 6	       
 ---22/11/2021
 --EI-18. Listado de los despachos donde hay profesores que no son responsables de ninguna asignatura
 select distinct p.despacho
 from ei.profesor p
-where not EXISTS(select * from ri.asignatura a where p.npr= a.profesor);	       
+where not EXISTS(select * from ri.asignatura a where p.npr= a.profesor);
+
+/*EI-19. Listado de los alumnos que se han matriculado de alguna asignatura en el año 2000 o 2002, y de 
+ninguna asignatura en el año 2001*/
+select nombre 
+from ei.alumno a
+where exists (select *
+              from ei.matricula m
+              where (año = 2000 or año = 2002) and a.NAL = m.alum)
+              and not exists
+              ( select * from ei.matricula m where año = 2001 and a.nal = m.alum);
+            
+--ei-20
+select nombre, despacho
+from  ei.profesor p1
+where despacho not in (select despacho
+                      from ei.profesor p2
+                      where p2.npr <>p1.npr);
+                      
+/*MF-17. Utilizando consultas correlacionadas, mostrar el nombre de los abonados que han llamado el día ‘16/10/06’*/
+select  nombre 
+from mf.cliente c
+where exists (SELECT * from mf.telefono tf inner join mf.llamada ll on tf.numero = ll.tf_origen 
+              where c.dni = tf.cliente and TO_CHAR (ll.FECHA_HORA, 'dd/MM/YY') = '16/10/06');
+
+
+/*MF-18. Utilizando consultas correlacionadas, obtener el nombre de los abonados que han realizado llamadas de 
+menos de 1 minuto y medio*/
+select nombre
+from mf.cliente c
+where exists (select * from mf.llamada ll inner join mf.telefono tf on ll.tf_origen = tf.numero 
+              where c.dni= tf.CLIENTE and ll.DURACION <90);
+
+/*MF-19. Utilizando consultas correlacionadas, obtener el nombre de los abonados de la compañía ‘KietoStar’ que 
+no hicieron ninguna llamada el mes de septiembre*/
+      
