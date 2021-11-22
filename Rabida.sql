@@ -336,4 +336,9 @@ where exists (select * from mf.llamada ll inner join mf.telefono tf on ll.tf_ori
 
 /*MF-19. Utilizando consultas correlacionadas, obtener el nombre de los abonados de la compañía ‘KietoStar’ que 
 no hicieron ninguna llamada el mes de septiembre*/
+select c.nombre, tf.numero 
+from mf.cliente c inner join MF.TELEFONO tf on tf.cliente = c.DNI
+                  inner join mf.compañia co on co.cif= tf.compañia
+where co.nombre = 'Kietostar' and not exists ( select * from MF.LLAMADA ll 
+                                               where tf.numero = ll.tf_origen and extract (month from ll.fecha_hora) = 9);                 
       
