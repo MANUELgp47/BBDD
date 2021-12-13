@@ -491,4 +491,62 @@ GROUP BY CO.NOMBRE
 HAVING COUNT (*) >= ALL (SELECT COUNT (*)
                          FROM MF.LLAMADA LL INNER JOIN MF.TELEFONO T ON TF_ORIGEN= T.NUMERO
                          WHERE TO_CHAR(FECHA_HORA, 'DD/MM/YY')='16/10/06'
-                         GROUP BY T.COMPAÑIA);       
+                         GROUP BY T.COMPAÑIA);    
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+
+       ----repaso examen
+--#############crear tablas 
+UNIQUE--NO PUEDE TENER CAMPOS DUPLICADOS
+CREATE TABLE RALLY (
+  codRally CHAR(4),
+  Nombre VARCHAR2(50),
+  Pis VARCHAR2(20),
+  Fecha DATE,
+  CONSTRAINT rallyClave PRIMARY KEY (codRally)
+);
+CREATE TABLE TRAMO (
+  codRally CHAR(4),
+  numeroTramo NUMBER(38, 0),
+  totalKms NUMBER(5, 2),
+  Dificultad CHAR(1) DEFAULT 'B' NOT NULL,
+  CONSTRAINT tramoClave PRIMARY KEY (codRally, numeroTramo),
+  CONSTRAINT tramoAjena FOREIGN KEY (codRally) REFERENCES RALLY (codRally),
+  CONSTRAINT tramoDificultadesValidas CHECK(Dificultad IN ('A','B','C'))
+);
+---CHECK
+CONSTRAINT ATRIBUTO CHECK(CONDICION);
+
+CONSTRAINT nombre CHECK (campo1 > 100)
+CONSTRAINT nombre CHECK (sexo IN ('Varón', 'Mujer'))
+CONSTRAINT nombre CHECK (nombre1 <> nombre2)
+CONSTRAINT nombre CHECK (fecha1 > to_date('11/10/1999','dd/mm/yyyy'))
+CONSTRAINT nombre CHECK (fecha1 = fecha2)
+--############# BORRAR tablas 
+DROP TABLE NOMBRE;
+--############# UPDATE
+UPDATE ASIGNATURA
+SET cuat = 2, esp = 'S'
+WHERE nombre = 'Análisis Numérico';
+--############# CAMBIAR tablas 
+ALTER TABLE RALLY ADD CONSTRAINT rallyNombreUnico UNIQUE(nombre);
+ALTER TABLE RALLY ADD CONSTRAINT rallyFechaValida CHECK(Fecha > to_date('01/01/2009', 'dd/mm/yyyy') AND Fecha < to_date('31/12/2009', 'dd/mm/yyyy'));
+ALTER TABLE TRAMO DROP CONSTRAINT tramoAjena;
+ALTER TABLE TRAMO ADD CONSTRAINT tramoAjena FOREIGN KEY (codRally) REFERENCES RALLY (codRally) ON DELETE CASCADE;
+
+--############# INTRODUCIR DATOS 
+INSERT INTO RALLY VALUES ('R001', 'Rally de Cataluña', 'España', to_date('05/09/2009', 'dd/mm/yyyy'));
+INSERT INTO TRAMO VALUES ('R001', 1, 50.3, 'A');
+INSERT INTO RALLY VALUES ('R004', 'Rally de Andalucia', 'España', to_date('01/10/1997', 'dd/mm/yyyy'));
+
+--############# BORRAR DATOS 
+DELETE FROM RALLY;
+DELETE FROM RALLY WHERE codRally = 'R002';
