@@ -740,7 +740,33 @@ END;
 
 call dbms_output.put_line(facturacion('654123321', 2006)); 
 
-      
+ 
+--EJERCICIO 2
+/*
+Diseñar el procedimiento LlamadaFacturacion(año), el cual, para cada teléfono de 
+la  tabla  LLAMADAS  debe  realizar  una  llamada a  la función facturación  y mostrar  la 
+facturación de dicho teléfono en el año que se le pasa como parámetro. */
+
+CREATE OR REPLACE PROCEDURE LlamadaFacturacionE2(P_AÑO INTEGER) IS
+
+  CURSOR  C_TELEFONOS(P_AÑO INTEGER)IS
+    SELECT DISTINCT TF_ORIGEN FROM LLAMADA
+    WHERE EXTRACT(YEAR FROM FECHA_HORA)=P_AÑO;
+    
+BEGIN 
+
+   dbms_output.put_line('Nº TELEFONO'|| 'IMPORTE ESN €');
+   
+   FOR R_TELEFONO IN C_TELEFONO(P_AÑO) LOOP
+     dbms_output.put_line(R_TELEFONO.TF_ORIGEN || ' ' || FACTURACION(R_TELEFONO.TF_ORIGEN, P_AÑO));
+   END LOOP;
+  
+  EXCEPTION 
+    WHEN OTHERS THEN
+     WHE dbms_output.put_line('ERROR');
+END;
+
+execute llamadaFacturacion(2006);      
        
        
        
