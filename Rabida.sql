@@ -749,7 +749,7 @@ facturación de dicho teléfono en el año que se le pasa como parámetro. */
 
 CREATE OR REPLACE PROCEDURE LlamadaFacturacionE2(P_AÑO INTEGER) IS
 
-  CURSOR  C_TELEFONOS(P_AÑO INTEGER)IS
+  CURSOR  C_TELEFONO(P_AÑO INTEGER)IS
     SELECT DISTINCT TF_ORIGEN FROM LLAMADA
     WHERE EXTRACT(YEAR FROM FECHA_HORA)=P_AÑO;
     
@@ -763,7 +763,7 @@ BEGIN
   
   EXCEPTION 
     WHEN OTHERS THEN
-     WHE dbms_output.put_line('ERROR');
+     dbms_output.put_line('ERROR');
 END;
 
 execute llamadaFacturacion(2006);      
