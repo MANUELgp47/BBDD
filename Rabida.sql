@@ -771,7 +771,110 @@ execute llamadaFacturacion(2006);
        
        
        
-       
+Crear un procedimiento que tenga como parámetros de entrada el nombre de una
+compañía y una fecha. Dicho procedimiento debe realizar las siguientes
+operaciones:
+  1. Comprobar que existen en la BD llamadas realizadas en la fecha que se pasa
+  como parámetro. En caso contrario lanzar una excepción y mostrar el
+  mensaje “No hay llamadas en la fecha <fecha> en la BD”.
+  2. Para cada teléfono de la compañía que se pasa por parámetro, el
+  procedimiento debe mostrar la siguiente información: número de teléfono,
+  número total de llamadas realizadas en la fecha indicada, número de
+  llamadas de duración mayor de 100 segundos realizadas en la fecha,
+  porcentaje que suponen estas últimas respecto al total de las realizadas.
+  3. Un resumen del número de llamadas realizadas por todos los teléfonos de la
+  compañía indicada en la fecha pasada por parámetro.
+*/
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE
+PROCEDURE ejercicio3(N_compañia mf.compañia.nombre%TYPE, fecha date) IS 
+llamadas integer;
+llamadas2 integer;
+llamadas_100 integer;
+sumador integer;
+porcentaje NUMBER(5,2);
+No_llamadas EXCEPTION;
+
+cursor C_telefono (N_compañia mf.compañia.nombre%TYPE) is
+select tf.numero
+from mf.telefono tf inner join mf.compañia c on c.cif = tf.compañia
+where c.nombre = N_compañia;
+
+begin
+sumador :=0;
+
+  IF llamadas <1 THEN 
+ RAISE No_llamadas;
+ else
+  dbms_output.put_line('-----------------------------------');
+  dbms_output.put_line('telefono' || ' '||'Llamadas' || ' '||'Llamadas100' || '   '  || '%') ;
+
+  SELECT DISTINCT count(*) into llamadas
+    FROM mf.LLAMADA 
+    WHERE TO_CHAR(fecha_hora,'dd/mm/yy')=fecha  ;
+    
+    FOR R_TELEFONO IN C_TELEFONO(N_compañia) LOOP
+   
+      select count (*) into llamadas2
+      from mf.llamada
+      where tf_origen=R_TELEFONO.numero and TO_CHAR(fecha_hora,'dd/mm/yy')=fecha ; 
+      
+      select count (*) into llamadas_100
+      from mf.llamada
+      where tf_origen=R_TELEFONO.numero and TO_CHAR(fecha_hora,'dd/mm/yy')=fecha and duracion>100 ; 
+   
+     
+      iF (llamadas_100 <> 0) THEN porcentaje := (llamadas_100 / llamadas2)*100;
+      ELSE porcentaje:=0;
+      END IF;
+     
+     dbms_output.put_line(R_TELEFONO.numero || '     '||llamadas2 || '      '||llamadas_100 || '         '  || porcentaje) ;
+     sumador := sumador + llamadas2;
+   END LOOP;
+   
+   dbms_output.put_line('Numero de llamadas '|| sumador) ;
+ 
+  END IF;
+
+ EXCEPTION
+   WHEN No_llamadas THEN 
+    dbms_output.put_line('No hay llamadas en la fecha '||fecha||' en la BD');
+    --RETURN -1;
+
+end;
+
+
+execute ejercicio3('Aotra', '01/10/06');  
+    
+    
+ --disparador
+ create or replace trigger ejerrcicio4 before insert on mf.llamada
+ for each row
+ declare 
+  llamadas_orig INTEGER;
+  llamadas_dest INTEGER;
+ 
+ begin
+  select count(*) into llamadas_orig
+  from llamada 
+  where (tf_origen =: new.tf_origen and new.fecha_hora =: fecha_hora) or (tf_destino= :new.tf_origenAND fecha_hora= :new.fecha_hora);
+
+  if (llamadas_orig > 0) then 
+    RAISE_APPLICATION_ERROR(-20001,'El teléfono origen' || :new.tf_origen|| ' está realizando o recibiendo una llamada a las ' || :new.fecha_hora);
+  end if;
+  
+    select count(*) into llamadas_dest
+  from llamada 
+  where (tf_origen =: new.tf_origen and new.fecha_hora =: fecha_hora) or (tf_destino= :new.tf_origenAND fecha_hora= :new.fecha_hora);
+
+  if (llamadas_dest > 0) then 
+    RAISE_APPLICATION_ERROR(-20001,'El teléfono destino' || :new.tf_origen|| ' está realizando o recibiendo una llamada a las ' || :new.fecha_hora);
+  end if;
+ end; 
+ 
+ 
+ insert into llamada values ('654345345', '678234234', '21/10/06 21:05:13', 123);
+ insert into llamada values ('654345345', '678234234', '12/09/06 11:52:19', 123);       
        
        
        
